@@ -18,3 +18,5 @@ define( 'CUG_VERSION', '0.1' );
 define( 'CUG_PATH', plugin_dir_path(__FILE__) );
 define( 'CUG_URL', plugin_dir_url(__FILE__) );
 define( 'CUG_TEXT_DOMAIN', 'cug' );
+ 
+require_once CUG_PATH . 'includes/core.php';

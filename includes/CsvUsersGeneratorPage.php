@@ -12,6 +12,8 @@ class CsvUsersGeneratorPage {
         add_action( 'admin_menu', array( $this, 'addCsvUsersGenerator' ) );
 
         add_action( 'admin_post_csv_users_generator', array( $this, 'importCsv' ) );
+
+        add_action('admin_notices', array( $this, 'CsvUsersGeneratorAdminNotices') );
     }
 
     private function loadDependencies()
@@ -83,5 +85,36 @@ class CsvUsersGeneratorPage {
         wp_safe_redirect( $redirect_to );
         exit;
 
+    }
+    
+    /**
+     * Added custom admin notices
+     */
+    public function CsvUsersGeneratorAdminNotices(){
+        global $pagenow;
+        if ( $pagenow == 'admin.php' && isset($_GET['page']) && sanitize_title($_GET['page']) == 'csv-users-generator' ) {
+
+            if ( isset($_GET['csvSuccess']) && sanitize_title($_GET['csvSuccess']) == 'generated' ) : ?>
+                <div class="notice notice-success is-dismissible">
+                    <p><b><?php _e('Success! Users generated.', CUG_TEXT_DOMAIN ) ?></b></p>
+                </div>
+            <?php endif;
+
+            if ( isset($_GET['csvWarning']) ) :
+                $file_error = CsvParser::getError(sanitize_title(sanitize_title($_GET['csvWarning'])));
+                ?>
+                <div class="notice notice-warning is-dismissible">
+                    <p><b><?php echo $file_error->get_error_message(); ?></b></p>
+                </div>
+            <?php endif;
+
+            if ( isset($_GET['csvError']) ) :
+                $file_error = CsvParser::getError(sanitize_title($_GET['fileError']));
+                ?>
+                <div class="notice notice-error is-dismissible">
+                    <p><b><?php echo $file_error->get_error_message(); ?></b></p>
+                </div>
+            <?php endif;
+        }
     }
 }

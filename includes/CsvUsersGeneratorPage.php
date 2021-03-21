@@ -19,6 +19,7 @@ class CsvUsersGeneratorPage {
     private function loadDependencies()
     {
         require_once CUG_PATH . 'includes/CsvParser.php';
+        require_once CUG_PATH . 'includes/CugError.php';
     }
 
     /**
@@ -101,7 +102,7 @@ class CsvUsersGeneratorPage {
             <?php endif;
 
             if ( isset($_GET['csvWarning']) ) :
-                $file_error = CsvParser::getError(sanitize_title(sanitize_title($_GET['csvWarning'])));
+                $file_error = CugError::getError(sanitize_title(sanitize_title($_GET['csvWarning'])));
                 ?>
                 <div class="notice notice-warning is-dismissible">
                     <p><b><?php echo $file_error->get_error_message(); ?></b></p>
@@ -109,7 +110,7 @@ class CsvUsersGeneratorPage {
             <?php endif;
 
             if ( isset($_GET['csvError']) ) :
-                $file_error = CsvParser::getError(sanitize_title($_GET['fileError']));
+                $file_error = CugError::getError(sanitize_title($_GET['fileError']));
                 ?>
                 <div class="notice notice-error is-dismissible">
                     <p><b><?php echo $file_error->get_error_message(); ?></b></p>

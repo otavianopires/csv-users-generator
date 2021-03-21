@@ -1,8 +1,8 @@
 <?php
+
 /**
  * Creates page for the import csv form
  */
-
 class CsvUsersGeneratorPage {
 
     public function __construct()

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Parse CSV data and validates a csv file
+ */
 class CsvParser {
 
     /**

@@ -19,6 +19,7 @@ class CsvUsersGeneratorPage {
     private function loadDependencies()
     {
         require_once CUG_PATH . 'includes/CsvParser.php';
+        require_once CUG_PATH . 'includes/UsersGenerator.php';
         require_once CUG_PATH . 'includes/CugError.php';
     }
 
@@ -46,6 +47,9 @@ class CsvUsersGeneratorPage {
         require_once CUG_PATH . 'templates/csv-users-generator.php';
     }
 
+    /**
+     * Import CSV and generate users
+     */
     public function importCsv()
     {
         if ( !isset($_POST['cug_nonce']) || ! wp_verify_nonce( $_POST['cug_nonce'], 'csv_users_nonce' ) ) {
@@ -70,7 +74,6 @@ class CsvUsersGeneratorPage {
         if ( !$users_list ) {
             $query_args = array( 'csvWarning' => 'empty' );
             $redirect_to = add_query_arg( $query_args, admin_url( 'admin.php?page=csv-users-generator' ) );
-
             wp_safe_redirect( $redirect_to );
             exit;
         }
@@ -78,11 +81,11 @@ class CsvUsersGeneratorPage {
         // All good! We can generate new users
 
         // Code to generate users
+        $total_users = UsersGenerator::generateUsers($users_list);
 
         // Redirect after users generated
-        $query_args = array( 'csvSuccess' => 'generated' );
+        $query_args = array( 'csvSuccess' => 'generated', 'totalUsers' => $total_users );
         $redirect_to = add_query_arg( $query_args, admin_url( 'admin.php?page=csv-users-generator' ) );
-
         wp_safe_redirect( $redirect_to );
         exit;
 
@@ -95,9 +98,11 @@ class CsvUsersGeneratorPage {
         global $pagenow;
         if ( $pagenow == 'admin.php' && isset($_GET['page']) && sanitize_title($_GET['page']) == 'csv-users-generator' ) {
 
-            if ( isset($_GET['csvSuccess']) && sanitize_title($_GET['csvSuccess']) == 'generated' ) : ?>
+            if ( isset($_GET['csvSuccess']) && sanitize_title($_GET['csvSuccess']) == 'generated' ) :
+                $total_users = isset($_GET['totalUsers']) ? $_GET['totalUsers'] : '0';
+                ?>
                 <div class="notice notice-success is-dismissible">
-                    <p><b><?php _e('Success! Users generated.', CUG_TEXT_DOMAIN ) ?></b></p>
+                    <p><b><?php echo sprintf( __('Total users generated: %s', CUG_TEXT_DOMAIN ), $total_users); ?></b></p>
                 </div>
             <?php endif;
 
